@@ -9,6 +9,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Problems/Pretty looking pattern" />
+            <option value="$PROJECT_DIR$/Problems/Swap the columns" />
+            <option value="$PROJECT_DIR$/Problems/Symmetric matrix" />
             <option value="$PROJECT_DIR$/Simple Banking System/task" />
             <option value="$PROJECT_DIR$/util" />
           </set>
