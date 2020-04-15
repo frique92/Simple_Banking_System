@@ -1,0 +1,27 @@
+<h2>Description</h2>
+
+<p>You have created the foundation of our banking system. Now let's take the opportunity to deposit money into an account, make transfers and close an account if necessary.</p>
+
+<p>Now your menu should look like this:</p>
+
+<pre><code class="language-no-highlight">1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit</code></pre>
+
+<p>If the user asks for <code>Balance</code>, you should read the balance of the account from the database and output it into the console.</p>
+
+<p><code>Add income</code> item should allow us to deposit money to the account.</p>
+
+<p><code>Do transfer</code> item should allow to transfer money to another account. You should handle the following errors:</p>
+
+<ul>
+	<li>If the user tries to transfer money to the same account, output the following message: “You can't transfer money to the same account!”</li>
+	<li>If the receiver's card number doesn’t pass the Luhn algorithm, you should output: “Probably you made mistake in card number. Please try again!”</li>
+	<li>If the receiver's card number doesn’t exist, you should output: “Such a card does not exist.”</li>
+	<li>If there is no error, ask the user how much money they want to transfer and make the transaction.</li>
+</ul>
+
+<p>If the user chooses the <code>Close account</code> item, you should delete that account from database.</p>
