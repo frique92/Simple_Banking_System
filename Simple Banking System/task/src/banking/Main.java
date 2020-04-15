@@ -203,13 +203,30 @@ class Card {
         private final Random random = new Random();
 
         public Builder generateNumber() {
-            this.number = "400000" + (1_000_000_000 + random.nextInt(8_999_999_99) + random.nextInt(9));
+            String number = "400000" + (1_000_000_00 + random.nextInt(8_999_999_99));
+            this.number = number + getControlNumberByLuhnAlgorithm(number);
+
             return this;
         }
 
         public Builder generatePinCode() {
             this.pinCode = String.valueOf(1000 + random.nextInt(8999));
             return this;
+        }
+
+        private int getControlNumberByLuhnAlgorithm(String cardNumber) {
+            int result = 0;
+            for (int i = 0; i < cardNumber.length(); i++) {
+                int digit = Character.getNumericValue(cardNumber.charAt(i));
+                if (i % 2 == 0) {
+                    int doubleDigit = digit * 2 > 9 ? digit * 2 - 9 : digit * 2;
+                    result += doubleDigit;
+                    continue;
+                }
+                result += digit;
+            }
+            int num = 10 - result % 10;
+            return (num == 10) ? 0 : num;
         }
 
         public Card build() {

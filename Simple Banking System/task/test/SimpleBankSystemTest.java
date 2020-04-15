@@ -244,6 +244,68 @@ public class SimpleBankSystemTest extends BaseStageTest {
 
                             isCompleted = true;
                             return "0";
+                        }),
+                //Проверка номера карты по алгоритму Луна
+                new TestCase()
+                        .setInput("1")
+                        .addInput(output -> {
+                            String out = output.toString().trim().toLowerCase();
+
+                            Pattern cardNumberPattern = Pattern.compile("400000\\d{10}");
+                            Matcher cardNumberMatcher = cardNumberPattern.matcher(out);
+
+                            if (!cardNumberMatcher.find()) {
+                                return new CheckResult(false, "You should output card number and PIN like in example");
+                            }
+
+                            String cardNumber = cardNumberMatcher.group();
+
+                            if (!checkLuhnAlgorithm(cardNumber)) {
+                                return new CheckResult(false, "The card number doesn’t pass the Luhn algorithm.");
+                            }
+
+                            return "1";
+                        })
+                        .addInput(output -> {
+                            String out = output.toString().trim().toLowerCase();
+
+                            Pattern cardNumberPattern = Pattern.compile("400000\\d{10}");
+                            Matcher cardNumberMatcher = cardNumberPattern.matcher(out);
+
+                            if (!cardNumberMatcher.find()) {
+                                return new CheckResult(false, "You should output card number and PIN like in example");
+                            }
+
+                            String cardNumber = cardNumberMatcher.group();
+
+                            if (!checkLuhnAlgorithm(cardNumber)) {
+                                return new CheckResult(false, "The card number doesn’t pass the Luhn algorithm.");
+                            }
+
+                            return "1";
+                        })
+                        .addInput(output -> {
+                            String out = output.toString().trim().toLowerCase();
+
+                            Pattern cardNumberPattern = Pattern.compile("400000\\d{10}");
+                            Matcher cardNumberMatcher = cardNumberPattern.matcher(out);
+
+                            if (!cardNumberMatcher.find()) {
+                                return new CheckResult(false, "You should output card number and PIN like in example");
+                            }
+
+                            String cardNumber = cardNumberMatcher.group();
+
+                            if (!checkLuhnAlgorithm(cardNumber)) {
+                                return new CheckResult(false, "The card number doesn’t pass the Luhn algorithm.");
+                            }
+
+
+                            return "1";
+                        })
+                        .addInput(output -> {
+                            isCompleted = true;
+                            return "0";
                         })
         );
     }
@@ -255,5 +317,20 @@ public class SimpleBankSystemTest extends BaseStageTest {
         else
             isCompleted = false;
         return CheckResult.TRUE;
+    }
+
+    //Возвращает true, если проверка пройдена. Иначе false
+    private boolean checkLuhnAlgorithm(String cardNumber) {
+        int result = 0;
+        for (int i = 0; i < cardNumber.length(); i++) {
+            int digit = Character.getNumericValue(cardNumber.charAt(i));
+            if (i % 2 == 0) {
+                int doubleDigit = digit * 2 > 9 ? digit * 2 - 9 : digit * 2;
+                result += doubleDigit;
+                continue;
+            }
+            result += digit;
+        }
+        return result % 10 == 0;
     }
 }
