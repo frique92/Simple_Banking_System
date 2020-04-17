@@ -18,7 +18,7 @@
 
 <p>First, we need to generate an Account Identifier, which is unique to each card. Then we need to assign the Account Identifier to our BIN (Bank Identification Number). As a result, we get a 15-digit number 400000844943340, so we only have to generate the last digit, which is a checksum. </p>
 
-<p>To find the checksum, it is necessary to find the control number for 400000844943340 by the Luhn algorithm. It equals 57 (from the example above). The final check digit of the generated map is <code>57+X</code>, where <code>X</code> is checksum. In order for the final card number to pass the validity check, the check number must be a multiple of 10, so <code>57+X</code> must be a multiple of 10. The only number that satisfies this condition is 3. </p>
+<p>To find the checksum, it is necessary to find the control number for 400000844943340 by the Luhn algorithm. It equals 57 (from the example above). The final check digit of the generated map is <code class="java">57+X</code>, where <code class="java">X</code> is checksum. In order for the final card number to pass the validity check, the check number must be a multiple of 10, so <code class="java">57+X</code> must be a multiple of 10. The only number that satisfies this condition is 3. </p>
 
 <p>Therefore, the checksum is 3. So the total number of the generated card is 4000008449433403. The received card is checked by the Luhn algorithm.</p>
 
@@ -42,7 +42,7 @@
 
 <h2>Example</h2>
 
-<p>The symbol <code>&gt;</code> represents the user input. Notice that it's not a part of the input.</p>
+<p>The symbol <code class="java">&gt;</code> represents the user input. Notice that it's not a part of the input.</p>
 
 <pre><code class="language-no-highlight">1. Create account
 2. Log into account
