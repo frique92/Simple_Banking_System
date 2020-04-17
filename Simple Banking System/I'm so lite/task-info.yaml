@@ -5,9 +5,9 @@ files:
   visible: false
   text: |
     import banking.Main;
-    import org.hyperskill.hstest.v6.stage.BaseStageTest;
-    import org.hyperskill.hstest.v6.testcase.CheckResult;
-    import org.hyperskill.hstest.v6.testcase.TestCase;
+    import org.hyperskill.hstest.stage.StageTest;
+    import org.hyperskill.hstest.testcase.CheckResult;
+    import org.hyperskill.hstest.testcase.TestCase;
     import org.junit.AfterClass;
     import org.junit.BeforeClass;
 
@@ -25,7 +25,7 @@ files:
     import java.util.regex.Pattern;
 
 
-    public class SimpleBankSystemTest extends BaseStageTest<String> {
+    public class SimpleBankSystemTest extends StageTest<String> {
 
         public SimpleBankSystemTest() {
             super(Main.class);
@@ -397,7 +397,7 @@ files:
                 return new CheckResult(false, "Looks like your program unexpectedly terminated without choosing 'exit' item");
             else
                 isCompleted = false;
-            return CheckResult.TRUE;
+            return CheckResult.correct();
         }
 
         @Override
@@ -406,7 +406,7 @@ files:
                 return new CheckResult(false, "Looks like your program unexpectedly terminated without choosing 'exit' item");
             else
                 isCompleted = false;
-            return CheckResult.TRUE;
+            return CheckResult.correct();
         }
 
         //Возвращает true, если проверка пройдена. Иначе false
