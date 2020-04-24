@@ -1,5 +1,6 @@
 package banking;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -7,12 +8,122 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Menu menu = new Menu();
-        menu.show();
+        String fileName = "";
+        if (args.length > 0) {
+            if ("-fileName".equals(args[0])) {
+                fileName = args[1];
+            }
+        }
+
+        BankingSystem bankingSystem = new BankingSystem(fileName);
+        bankingSystem.start();
     }
 }
 
-class Menu {
+class ManagerDB {
+
+    private final String url;
+
+    ManagerDB(String fileName) {
+        url = "jdbc:sqlite:./" + fileName;
+    }
+
+    private Connection connect() {
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return conn;
+
+    }
+
+    public void createCards() {
+        String sql = "CREATE TABLE IF NOT EXISTS card (\n"
+                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                + " number TEXT NOT NULL,\n"
+                + " pin TEXT NOT NULL,\n"
+                + " balance INTEGER default 0\n"
+                + ");";
+
+        try (Connection conn = connect()) {
+            if (conn != null) {
+                Statement stmt = conn.createStatement();
+                stmt.execute(sql);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void addCard(String number, String pin, int balance) {
+        String sql = "INSERT INTO card (number, pin, balance) VALUES (?,?,?);";
+
+        try (Connection conn = connect()) {
+            if (conn != null) {
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, number);
+                statement.setString(2, pin);
+                statement.setInt(3, balance);
+                statement.execute();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public ArrayList<RecordDB> getAllCards() {
+        String sql = "SELECT number, pin, balance from card";
+
+        ArrayList<RecordDB> records = new ArrayList<>();
+
+        try (Connection conn = connect()) {
+            if (conn != null) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    records.add(new RecordDB(
+                            rs.getString("number"),
+                            rs.getString("pin"),
+                            rs.getInt("balance")));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return records;
+    }
+
+}
+
+class RecordDB {
+    private final String number;
+    private final String pin;
+    private final int balance;
+
+    RecordDB(String number, String pin, int balance) {
+        this.number = number;
+        this.pin = pin;
+        this.balance = balance;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+}
+
+class BankingSystem {
 
     enum State {
         MAIN_NON_AUTHORIZATION, MAIN_AUTHORIZATION
@@ -23,12 +134,19 @@ class Menu {
     private State state = State.MAIN_NON_AUTHORIZATION;
     private final Bank bank = new Bank();
     private Card currentCard;
+    private final ManagerDB managerDB;
+
+    BankingSystem(String fileName) {
+        managerDB = new ManagerDB(fileName);
+        managerDB.createCards();
+        loadCardsIntoBank();
+    }
 
     private void setState(State state) {
         this.state = state;
     }
 
-    public void show() {
+    public void start() {
         while (isWorking) {
             showMenu();
             int action = Integer.parseInt(scanner.nextLine());
@@ -128,6 +246,7 @@ class Menu {
     private void exit() {
         isWorking = false;
         System.out.println("Bye!");
+        loadCardsIntoDB();
     }
 
     private void getBalance() {
@@ -135,7 +254,34 @@ class Menu {
             System.out.println("Not available current card");
             return;
         }
-        System.out.printf("Balance: %.0f", this.currentCard.getBalance());
+        System.out.printf("Balance: %d", this.currentCard.getBalance());
+    }
+
+    private void loadCardsIntoBank() {
+        ArrayList<RecordDB> records = managerDB.getAllCards();
+
+        ArrayList<Card> cards = new ArrayList<>();
+
+        for (RecordDB record : records) {
+            Card card = new Card.Builder()
+                    .setNumber(record.getNumber())
+                    .setPinCode(record.getPin())
+                    .setBalance(record.getBalance())
+                    .build();
+
+            cards.add(card);
+        }
+
+        bank.loadCards(cards);
+    }
+
+    private void loadCardsIntoDB() {
+
+        List<Card> cards = bank.getCards();
+
+        for (Card card : cards) {
+            managerDB.addCard(card.getNumber(), card.getPinCode(), card.getBalance());
+        }
     }
 
 }
@@ -168,17 +314,24 @@ class Bank {
         return newCard;
     }
 
+    public void loadCards(List<Card> cards) {
+        this.cards.addAll(cards);
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
 }
 
 class Card {
     private final String number;
     private final String pinCode;
-    private float balance;
+    private final int balance;
 
-    private Card(String number, String pinCode) {
+    private Card(String number, String pinCode, int balance) {
         this.number = number;
         this.pinCode = pinCode;
-        this.balance = 0f;
+        this.balance = balance;
     }
 
     public String getNumber() {
@@ -189,17 +342,14 @@ class Card {
         return pinCode;
     }
 
-    public float getBalance() {
+    public int getBalance() {
         return balance;
-    }
-
-    public void setBalance(float balance) {
-        this.balance = balance;
     }
 
     public static class Builder {
 
         private String number, pinCode;
+        private int balance;
         private final Random random = new Random();
 
         public Builder generateNumber() {
@@ -229,8 +379,23 @@ class Card {
             return (num == 10) ? 0 : num;
         }
 
+        public Builder setNumber(String number) {
+            this.number = number;
+            return this;
+        }
+
+        public Builder setPinCode(String pinCode) {
+            this.pinCode = pinCode;
+            return this;
+        }
+
+        public Builder setBalance(int balance) {
+            this.balance = balance;
+            return this;
+        }
+
         public Card build() {
-            return new Card(number, pinCode);
+            return new Card(number, pinCode, balance);
         }
 
     }
