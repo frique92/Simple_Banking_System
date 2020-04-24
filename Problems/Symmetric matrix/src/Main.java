@@ -1,3 +1,4 @@
+// Posted from EduTools plugin
 import java.util.Scanner;
 
 class Main {
@@ -18,10 +19,7 @@ class Main {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (matrix[i][j] != matrix[j][i]) {
-                    symmetric = false;
-                    break;
-                }
+                if (matrix[i][j] != matrix[j][i]) symmetric = false;
             }
         }
 
