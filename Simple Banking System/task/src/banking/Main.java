@@ -20,109 +20,6 @@ public class Main {
     }
 }
 
-class ManagerDB {
-
-    private final String url;
-
-    ManagerDB(String fileName) {
-        url = "jdbc:sqlite:./" + fileName;
-    }
-
-    private Connection connect() {
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return conn;
-
-    }
-
-    public void createCards() {
-        String sql = "CREATE TABLE IF NOT EXISTS card (\n"
-                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                + " number TEXT NOT NULL,\n"
-                + " pin TEXT NOT NULL,\n"
-                + " balance INTEGER default 0\n"
-                + ");";
-
-        try (Connection conn = connect()) {
-            if (conn != null) {
-                Statement stmt = conn.createStatement();
-                stmt.execute(sql);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void addCard(String number, String pin, int balance) {
-        String sql = "INSERT INTO card (number, pin, balance) VALUES (?,?,?);";
-
-        try (Connection conn = connect()) {
-            if (conn != null) {
-                PreparedStatement statement = conn.prepareStatement(sql);
-                statement.setString(1, number);
-                statement.setString(2, pin);
-                statement.setInt(3, balance);
-                statement.execute();
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public ArrayList<RecordDB> getAllCards() {
-        String sql = "SELECT number, pin, balance from card";
-
-        ArrayList<RecordDB> records = new ArrayList<>();
-
-        try (Connection conn = connect()) {
-            if (conn != null) {
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql);
-
-                while (rs.next()) {
-                    records.add(new RecordDB(
-                            rs.getString("number"),
-                            rs.getString("pin"),
-                            rs.getInt("balance")));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return records;
-    }
-
-}
-
-class RecordDB {
-    private final String number;
-    private final String pin;
-    private final int balance;
-
-    RecordDB(String number, String pin, int balance) {
-        this.number = number;
-        this.pin = pin;
-        this.balance = balance;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public String getPin() {
-        return pin;
-    }
-
-    public int getBalance() {
-        return balance;
-    }
-}
-
 class BankingSystem {
 
     enum State {
@@ -132,14 +29,11 @@ class BankingSystem {
     private final Scanner scanner = new Scanner(System.in);
     private boolean isWorking = true;
     private State state = State.MAIN_NON_AUTHORIZATION;
-    private final Bank bank = new Bank();
+    private final Bank bank;
     private Card currentCard;
-    private final ManagerDB managerDB;
 
     BankingSystem(String fileName) {
-        managerDB = new ManagerDB(fileName);
-        managerDB.createCards();
-        loadCardsIntoBank();
+        bank = new Bank(fileName);
     }
 
     private void setState(State state) {
@@ -246,7 +140,6 @@ class BankingSystem {
     private void exit() {
         isWorking = false;
         System.out.println("Bye!");
-        loadCardsIntoDB();
     }
 
     private void getBalance() {
@@ -256,51 +149,104 @@ class BankingSystem {
         }
         System.out.printf("Balance: %d", this.currentCard.getBalance());
     }
-
-    private void loadCardsIntoBank() {
-        ArrayList<RecordDB> records = managerDB.getAllCards();
-
-        ArrayList<Card> cards = new ArrayList<>();
-
-        for (RecordDB record : records) {
-            Card card = new Card.Builder()
-                    .setNumber(record.getNumber())
-                    .setPinCode(record.getPin())
-                    .setBalance(record.getBalance())
-                    .build();
-
-            cards.add(card);
-        }
-
-        bank.loadCards(cards);
-    }
-
-    private void loadCardsIntoDB() {
-
-        List<Card> cards = bank.getCards();
-
-        for (Card card : cards) {
-            managerDB.addCard(card.getNumber(), card.getPinCode(), card.getBalance());
-        }
-    }
-
 }
 
 class Bank {
 
-    private final List<Card> cards;
+    private final String url;
 
-    Bank() {
-        cards = new ArrayList<>();
+    Bank(String fileName) {
+        url = "jdbc:sqlite:./" + fileName;
+
+        createTableCard();
+    }
+
+    private Connection connect() {
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return conn;
+    }
+
+    public void createTableCard() {
+        String sql = "CREATE TABLE IF NOT EXISTS card (\n"
+                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                + " number TEXT NOT NULL,\n"
+                + " pin TEXT NOT NULL,\n"
+                + " balance INTEGER default 0\n"
+                + ");";
+
+        try (Connection conn = connect()) {
+            if (conn != null) {
+                Statement stmt = conn.createStatement();
+                stmt.execute(sql);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void addCard(String number, String pin, int balance) {
+        String sql = "INSERT INTO card (number, pin, balance) VALUES (?,?,?);";
+
+        try (Connection conn = connect()) {
+            if (conn != null) {
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, number);
+                statement.setString(2, pin);
+                statement.setInt(3, balance);
+                statement.execute();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void updateCard(String number, String pin, int balance) {
+        String sql = "UPDATE card SET balance = ? WHERE number = ? and pin = ?;";
+
+        try (Connection conn = connect()) {
+            if (conn != null) {
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setInt(1, balance);
+                statement.setString(2, number);
+                statement.setString(3, pin);
+                statement.execute();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public Card cardAvailable(String number, String pinCode) {
-        for (Card card : cards) {
-            if (card.getNumber().equals(number) && card.getPinCode().equals(pinCode)) {
-                return card;
+        String sql = "SELECT number, pin, balance FROM card WHERE number = ? and pin = ?";
+
+        Card card = null;
+
+        try (Connection conn = connect()) {
+            if (conn != null) {
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, number);
+                statement.setString(2, pinCode);
+
+                ResultSet rs = statement.executeQuery();
+
+                if (rs.next()) {
+                    card = new Card.Builder()
+                            .setNumber(rs.getString("number"))
+                            .setPinCode(rs.getString("pin"))
+                            .setBalance(rs.getInt("balance"))
+                            .build();
+                }
             }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-        return null;
+
+        return card;
     }
 
     public Card createCard() {
@@ -309,18 +255,11 @@ class Bank {
                 .generatePinCode()
                 .build();
 
-        cards.add(newCard);
+        addCard(newCard.getNumber(), newCard.getPinCode(), newCard.getBalance());
 
         return newCard;
     }
 
-    public void loadCards(List<Card> cards) {
-        this.cards.addAll(cards);
-    }
-
-    public List<Card> getCards() {
-        return cards;
-    }
 }
 
 class Card {
@@ -398,5 +337,29 @@ class Card {
             return new Card(number, pinCode, balance);
         }
 
+    }
+}
+
+class RecordDB {
+    private final String number;
+    private final String pin;
+    private final int balance;
+
+    RecordDB(String number, String pin, int balance) {
+        this.number = number;
+        this.pin = pin;
+        this.balance = balance;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public int getBalance() {
+        return balance;
     }
 }

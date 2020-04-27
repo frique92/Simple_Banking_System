@@ -698,12 +698,6 @@ files:
         }
     }
   learner_created: false
-- name: tempDatabase.s3db
-  visible: true
-  learner_created: true
-- name: card.s3db-journal
-  visible: true
-  learner_created: true
 feedback_link: https://hyperskill.org/projects/93/stages/518/implement
 status: Failed
 record: -1
