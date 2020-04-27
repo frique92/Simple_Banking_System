@@ -29,7 +29,7 @@
 </td>
 <td>
 <div class="infoBox" id="failures">
-<div class="counter">1</div>
+<div class="counter">0</div>
 <p>failures</p>
 </div>
 </td>
@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">33.929s</div>
+<div class="counter">0.496s</div>
 <p>duration</p>
 </div>
 </td>
@@ -50,8 +50,8 @@
 </div>
 </td>
 <td>
-<div class="infoBox failures" id="successRate">
-<div class="percent">0%</div>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
 <p>successful</p>
 </div>
 </td>
@@ -61,116 +61,13 @@
 <div id="tabs">
 <ul class="tabLinks">
 <li>
-<a href="#tab0">Failed tests</a>
+<a href="#tab0">Tests</a>
 </li>
 <li>
-<a href="#tab1">Tests</a>
-</li>
-<li>
-<a href="#tab2">Standard output</a>
+<a href="#tab1">Standard output</a>
 </li>
 </ul>
 <div id="tab0" class="tab">
-<h2>Failed tests</h2>
-<div class="test">
-<a name="start"></a>
-<h3 class="failures">start</h3>
-<span class="code">
-<pre>java.lang.AssertionError: Error in test #6
-
-In this test, the program is running for a long time, more than 15 seconds. Most likely, the program has gone into an infinite loop.
-
-Please find below the output of your program during this failed test.
-Note that the '&gt;' character indicates the beginning of the input line.
-
----
-
-Arguments: -fileName card.s3db
-
-1. Create account
-2. Log into account
-0. Exit
-&gt; 1
-
-Your card have been created
-Your card number:
-4000007396613785
-Your card PIN:
-1138
-
-1. Create account
-2. Log into account
-0. Exit
-&gt; 2
-
-Enter your card number:
-&gt; 4000007396613785
-Enter your PIN:
-&gt; 1138
-You have successfully logged in!
-
-1. Balance
-2. Log out
-0. Exit
-&gt; 0
-
-Bye!
-	at org.junit.Assert.fail(Assert.java:88)
-	at org.hyperskill.hstest.stage.StageTest.start(StageTest.java:97)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
-	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
-	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
-	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
-	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
-	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
-	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
-	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
-	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
-	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
-	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
-	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
-	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
-	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
-	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
-	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
-	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.runTestClass(JUnitTestClassExecutor.java:110)
-	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:58)
-	at org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor.execute(JUnitTestClassExecutor.java:38)
-	at org.gradle.api.internal.tasks.testing.junit.AbstractJUnitTestClassProcessor.processTestClass(AbstractJUnitTestClassProcessor.java:62)
-	at org.gradle.api.internal.tasks.testing.SuiteTestClassProcessor.processTestClass(SuiteTestClassProcessor.java:51)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
-	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)
-	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
-	at org.gradle.internal.dispatch.ContextClassLoaderDispatch.dispatch(ContextClassLoaderDispatch.java:32)
-	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:93)
-	at com.sun.proxy.$Proxy2.processTestClass(Unknown Source)
-	at org.gradle.api.internal.tasks.testing.worker.TestWorker.processTestClass(TestWorker.java:118)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
-	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:35)
-	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
-	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:175)
-	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:157)
-	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:404)
-	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:63)
-	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:46)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
-	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:55)
-	at java.base/java.lang.Thread.run(Thread.java:834)
-</pre>
-</span>
-</div>
-</div>
-<div id="tab1" class="tab">
 <h2>Tests</h2>
 <table>
 <thead>
@@ -181,13 +78,13 @@ Bye!
 </tr>
 </thead>
 <tr>
-<td class="failures">start</td>
-<td class="failures">33.929s</td>
-<td class="failures">failed</td>
+<td class="success">start</td>
+<td class="success">0.496s</td>
+<td class="success">passed</td>
 </tr>
 </table>
 </div>
-<div id="tab2" class="tab">
+<div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
 <pre>?[1;31m
@@ -235,9 +132,9 @@ Start test 5?[0m
 
 Your card have been created
 Your card number:
-4000008979068603
+4000007577092494
 Your card PIN:
-4993
+1154
 
 1. Create account
 2. Log into account
@@ -246,9 +143,9 @@ Your card PIN:
 
 Your card have been created
 Your card number:
-4000008282724728
+4000004269750125
 Your card PIN:
-6927
+9832
 
 1. Create account
 2. Log into account
@@ -257,9 +154,9 @@ Your card PIN:
 
 Your card have been created
 Your card number:
-4000007671219118
+4000007629211175
 Your card PIN:
-5527
+6762
 
 1. Create account
 2. Log into account
@@ -268,9 +165,9 @@ Your card PIN:
 
 Your card have been created
 Your card number:
-4000003595754561
+4000008969000731
 Your card PIN:
-1271
+5446
 
 1. Create account
 2. Log into account
@@ -288,9 +185,9 @@ Start test 6?[0m
 
 Your card have been created
 Your card number:
-4000007396613785
+4000005527144993
 Your card PIN:
-1138
+7803
 
 1. Create account
 2. Log into account
@@ -298,17 +195,226 @@ Your card PIN:
 &gt; 2
 
 Enter your card number:
-&gt; 4000007396613785
+&gt; 4000005527144993
 Enter your PIN:
-&gt; 1138
+&gt; 7803
 You have successfully logged in!
 
 1. Balance
-2. Log out
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
 0. Exit
 &gt; 0
 
 Bye!
+
+?[1;31m
+Start test 7?[0m
+1. Create account
+2. Log into account
+0. Exit
+&gt; 1
+
+Your card have been created
+Your card number:
+4000004617554195
+Your card PIN:
+7426
+
+1. Create account
+2. Log into account
+0. Exit
+&gt; 2
+
+Enter your card number:
+&gt; 4000004617554195
+Enter your PIN:
+&gt; 3607
+Wrong card number or PIN!
+
+1. Create account
+2. Log into account
+0. Exit
+&gt; 0
+
+Bye!
+
+?[1;31m
+Start test 8?[0m
+1. Create account
+2. Log into account
+0. Exit
+&gt; 1
+
+Your card have been created
+Your card number:
+4000008462153458
+Your card PIN:
+2533
+
+1. Create account
+2. Log into account
+0. Exit
+&gt; 2
+
+Enter your card number:
+&gt; 400000772573155
+Enter your PIN:
+&gt; 2533
+Wrong card number or PIN!
+
+1. Create account
+2. Log into account
+0. Exit
+&gt; 0
+
+Bye!
+
+?[1;31m
+Start test 9?[0m
+1. Create account
+2. Log into account
+0. Exit
+&gt; 1
+
+Your card have been created
+Your card number:
+4000003077277578
+Your card PIN:
+3521
+
+1. Create account
+2. Log into account
+0. Exit
+&gt; 2
+
+Enter your card number:
+&gt; 4000003077277578
+Enter your PIN:
+&gt; 3521
+You have successfully logged in!
+
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 1
+
+Balance: 0
+
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 0
+
+Bye!
+
+?[1;31m
+Start test 10?[0m
+1. Create account
+2. Log into account
+0. Exit
+&gt; 1
+
+Your card have been created
+Your card number:
+4000003231158524
+Your card PIN:
+5643
+
+1. Create account
+2. Log into account
+0. Exit
+&gt; 2
+
+Enter your card number:
+&gt; 4000003231158524
+Enter your PIN:
+&gt; 5643
+You have successfully logged in!
+
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 2
+
+Input income:
+&gt; 10000
+The income have successfully added!
+
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 2
+
+Input income:
+&gt; 15000
+The income have successfully added!
+
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 0
+
+Bye!
+
+?[1;31m
+Start test 11?[0m
+1. Create account
+2. Log into account
+0. Exit
+&gt; 1
+
+Your card have been created
+Your card number:
+4000002229304231
+Your card PIN:
+9352
+
+1. Create account
+2. Log into account
+0. Exit
+&gt; 2
+
+Enter your card number:
+&gt; 4000002229304231
+Enter your PIN:
+&gt; 9352
+You have successfully logged in!
+
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 4
+
+You have successfully close account!
+
+1. Create account
+2. Log into account
+0. Exit
+&gt; 0
+
+Bye!
+
 </pre>
 </span>
 </div>
@@ -320,7 +426,7 @@ Bye!
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 5.3.1</a> at 27 апр. 2020 г., 11:35:22</p>
+<a href="http://www.gradle.org">Gradle 5.3.1</a> at 27 апр. 2020 г., 13:06:44</p>
 </div>
 </div>
 </body>

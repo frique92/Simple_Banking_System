@@ -698,6 +698,9 @@ files:
         }
     }
   learner_created: false
+- name: card.s3db
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/93/stages/518/implement
-status: Failed
+status: Solved
 record: -1

@@ -69,7 +69,10 @@ class BankingSystem {
 
     private void showMainMenuAuthorization() {
         System.out.println("1. Balance");
-        System.out.println("2. Log out");
+        System.out.println("2. Add income");
+        System.out.println("3. Do transfer");
+        System.out.println("4. Close account");
+        System.out.println("5. Log out");
         System.out.println("0. Exit");
     }
 
@@ -94,6 +97,15 @@ class BankingSystem {
                     getBalance();
                     break;
                 case 2:
+                    addIncome();
+                    break;
+                case 3:
+                    doTransfer();
+                    break;
+                case 4:
+                    closeAccount();
+                    break;
+                case 5:
                     logOutSystem();
                     break;
                 case 0:
@@ -121,8 +133,8 @@ class BankingSystem {
         System.out.println("Enter your PIN:");
         String pinCode = scanner.nextLine();
 
-        Card card = bank.cardAvailable(number, pinCode);
-        if (card != null) {
+        Card card = bank.cardAvailable(number);
+        if (card != null && pinCode.equals(card.getPinCode())) {
             System.out.println("You have successfully logged in!");
             this.currentCard = card;
             setState(State.MAIN_AUTHORIZATION);
@@ -132,9 +144,9 @@ class BankingSystem {
     }
 
     private void logOutSystem() {
-        System.out.println("You have successfully logged out!");
         this.currentCard = null;
         setState(State.MAIN_NON_AUTHORIZATION);
+        System.out.println("You have successfully logged out!");
     }
 
     private void exit() {
@@ -147,7 +159,69 @@ class BankingSystem {
             System.out.println("Not available current card");
             return;
         }
-        System.out.printf("Balance: %d", this.currentCard.getBalance());
+        System.out.printf("Balance: %d\n", this.currentCard.getBalance());
+    }
+
+    private void addIncome() {
+        System.out.println("Input income:");
+        int income = Integer.parseInt(scanner.nextLine());
+
+        currentCard.addIncome(income);
+        bank.updateCard(currentCard);
+        System.out.println("The income have successfully added!");
+    }
+
+    private void doTransfer() {
+
+        System.out.println("Input number card of receiver:");
+        String numberCardOfReceiver = scanner.nextLine();
+
+        if (currentCard.getNumber().equals(numberCardOfReceiver)) {
+            System.out.println("You can't transfer money to the same account!");
+            return;
+        }
+        if (!checkCardByLuhnAlgorithm(numberCardOfReceiver)) {
+            System.out.println("Probably you made mistake in card number. Please try again!");
+            return;
+        }
+
+        Card cardOfReceiver = bank.cardAvailable(numberCardOfReceiver);
+        if (cardOfReceiver == null) {
+            System.out.println("Such a card does not exist.");
+        } else {
+            System.out.println("How much money you want to transfer:");
+            int sumOfTransfer = Integer.parseInt(scanner.nextLine());
+
+            currentCard.subtractMoney(sumOfTransfer);
+            bank.updateCard(currentCard);
+
+            cardOfReceiver.addIncome(sumOfTransfer);
+            bank.updateCard(cardOfReceiver);
+
+            System.out.println("You have successfully transfer!");
+        }
+
+    }
+
+    private boolean checkCardByLuhnAlgorithm(String cardNumber) {
+        int result = 0;
+        for (int i = 0; i < cardNumber.length(); i++) {
+            int digit = Character.getNumericValue(cardNumber.charAt(i));
+            if (i % 2 == 0) {
+                int doubleDigit = digit * 2 > 9 ? digit * 2 - 9 : digit * 2;
+                result += doubleDigit;
+                continue;
+            }
+            result += digit;
+        }
+        return result % 10 == 0;
+    }
+
+    private void closeAccount() {
+        bank.deleteCard(currentCard);
+        this.currentCard = null;
+        setState(State.MAIN_NON_AUTHORIZATION);
+        System.out.println("You have successfully close account!");
     }
 }
 
@@ -205,15 +279,15 @@ class Bank {
         }
     }
 
-    public void updateCard(String number, String pin, int balance) {
+    public void updateCard(Card card) {
         String sql = "UPDATE card SET balance = ? WHERE number = ? and pin = ?;";
 
         try (Connection conn = connect()) {
             if (conn != null) {
                 PreparedStatement statement = conn.prepareStatement(sql);
-                statement.setInt(1, balance);
-                statement.setString(2, number);
-                statement.setString(3, pin);
+                statement.setInt(1, card.getBalance());
+                statement.setString(2, card.getNumber());
+                statement.setString(3, card.getPinCode());
                 statement.execute();
             }
         } catch (SQLException e) {
@@ -221,8 +295,8 @@ class Bank {
         }
     }
 
-    public Card cardAvailable(String number, String pinCode) {
-        String sql = "SELECT number, pin, balance FROM card WHERE number = ? and pin = ?";
+    public Card cardAvailable(String number) {
+        String sql = "SELECT number, pin, balance FROM card WHERE number = ?";
 
         Card card = null;
 
@@ -230,7 +304,6 @@ class Bank {
             if (conn != null) {
                 PreparedStatement statement = conn.prepareStatement(sql);
                 statement.setString(1, number);
-                statement.setString(2, pinCode);
 
                 ResultSet rs = statement.executeQuery();
 
@@ -260,12 +333,28 @@ class Bank {
         return newCard;
     }
 
+    public void deleteCard(Card card) {
+        String sql = "DELETE FROM card WHERE number = ? and pin = ?";
+
+        try (Connection conn = connect()) {
+            if (conn != null) {
+                PreparedStatement statement = conn.prepareStatement(sql);
+                statement.setString(1, card.getNumber());
+                statement.setString(2, card.getPinCode());
+
+                statement.execute();
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
 }
 
 class Card {
     private final String number;
     private final String pinCode;
-    private final int balance;
+    private int balance;
 
     private Card(String number, String pinCode, int balance) {
         this.number = number;
@@ -283,6 +372,14 @@ class Card {
 
     public int getBalance() {
         return balance;
+    }
+
+    public void addIncome(int income) {
+        balance += income;
+    }
+
+    public void subtractMoney(int money) {
+        balance -= money;
     }
 
     public static class Builder {
